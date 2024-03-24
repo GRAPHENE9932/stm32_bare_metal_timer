@@ -100,6 +100,8 @@ zero_out_bss_loop:
 
     mov R2, #0
     strb R2, [R0]
+
+    add R0, R0, #1
     b zero_out_bss_loop
 zero_out_bss_loop_end:
     bx LR
