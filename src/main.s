@@ -28,14 +28,20 @@ main:
     str R1, [R0]
 
     bl enable_io_porta_clock
+    bl enable_io_portb_clock
+    
+    ldr R0, =3                  @ Port number.
+    ldr R1, =0b10               @ Alternate function mode.
+    bl set_gpiob_moder
 
     bl enable_shift_out_pins
 
     ldr R0, =digits         @ Digits location.
     bl seven_seg_set_digits_address
+     
+    bl tim2_pwm_initialize
+
 loop:
-
     bl seven_seg_display
+    
     b loop
-
-    b main
