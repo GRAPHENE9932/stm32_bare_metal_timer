@@ -13,7 +13,7 @@ seven_seg_display_leds:
 .byte 0b11011010    @ 2
 .byte 0b11110010    @ 3
 .byte 0b01100110    @ 4
-.byte 0b10110010    @ 5
+.byte 0b10110110    @ 5
 .byte 0b10111110    @ 6
 .byte 0b11100000    @ 7
 .byte 0b11111110    @ 8
