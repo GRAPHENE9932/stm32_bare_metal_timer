@@ -8,20 +8,6 @@ digits:
 .global main
 .global tim3_tick
 
-@ Accepts no arguments. Returns nothing.
-@ Just wastes 4000000 cycles.
-.type delay_for_4m_cycles, %function
-delay_for_4m_cycles:                @ 4 cycles to call.
-    ldr R0, =0                      @ 2 cycles.
-    ldr R1, =799998                 @ 2 cycles.
-delay_for_4m_cycles_loop:
-    add R0, R0, #1                  @ 1 cycle.
-    cmp R0, R1                      @ 1 cycle.
-    blo delay_for_4m_cycles_loop    @ 3 cycle if taken, 1 if not.
-
-    nop                             @ 1 cycle.
-    bx LR                           @ 3 cycles.
-
 .type tim3_tick, %function
 tim3_tick:
     ldr R0, =digits
