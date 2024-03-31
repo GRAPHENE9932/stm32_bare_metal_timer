@@ -1,18 +1,18 @@
 .section .text
-.global tim2_pwm_initialize
-.global enable_pwm_clock
+.global tim2_initialize
 
 .equ GPIOB_BASE, 0x48000400
 .equ GPIOX_AFRL_OFFSET, 0x00000020
 
 .equ TIM2_BASE, 0x40000000
-.equ TIM2_PSC_OFFSET, 0x00000028
-.equ TIM2_ARR_OFFSET, 0x0000002C
-.equ TIM2_CCR2_OFFSET, 0x00000038
-.equ TIM2_CCMR1_OFFSET, 0x00000018
-.equ TIM2_CCER_OFFSET, 0x00000020
-.equ TIM2_CR1_OFFSET, 0x00000000
-.equ TIM2_EGR_OFFSET, 0x00000014
+.equ TIM2_3_PSC_OFFSET, 0x00000028
+.equ TIM2_3_ARR_OFFSET, 0x0000002C
+.equ TIM2_3_CCR2_OFFSET, 0x00000038
+.equ TIM2_3_CCMR1_OFFSET, 0x00000018
+.equ TIM2_3_CCER_OFFSET, 0x00000020
+.equ TIM2_3_CR1_OFFSET, 0x00000000
+.equ TIM2_3_EGR_OFFSET, 0x00000014
+.equ TIM2_3_DIER_OFFSET, 0x0000000C
 
 .equ TIM2_PRESCALER, 1000                   @ 8000 Hz at clock frequency of 8 MHz.
 .equ TIM2_ARR, 10                           @ Period of 1250 us (800 Hz).
@@ -25,8 +25,8 @@
 .equ RCC_BASE, 0x40021000
 .equ RCC_APB1ENR_OFFSET, 0x0000001C
 
-.type initialize_pin, %function
-initialize_pin:
+.type initialize_output_pin, %function
+initialize_output_pin:
     @ Set the GPIOB_AFRL3 to 0b0010 to set the TIM2_CH2 function to
     @ the PORTB3 pin.
     ldr R0, =GPIOB_BASE + GPIOX_AFRL_OFFSET @ R0 stores the GPIOB_AFR register location.
@@ -41,58 +41,58 @@ initialize_pin:
 
     bx LR
 
-.type enable_pwm_clock, %function
-enable_pwm_clock:
+.type enable_tim2_clock, %function
+enable_tim2_clock:
     ldr R0, =RCC_BASE + RCC_APB1ENR_OFFSET  @ R0 stores the RCC_APB1ENR register location.
     ldr R1, [R0]                            @ R1 stores the RCC_APB1ENR register value.
 
-    ldr R2, =0x00000001                     @ R2 stores the OR mask.
+    ldr R2, =0x00000001                     @ R2 stores the OR mask (TIM2EN=1).
     orr R1, R1, R2
     str R1, [R0]
 
     bx LR
 
 @ Takes no arguments. Returns nothing.
-.type tim2_pwm_initialize, %function
-tim2_pwm_initialize:
+.type tim2_initialize, %function
+tim2_initialize:
     push {LR}
 
-    bl initialize_pin
-    bl enable_pwm_clock
+    bl initialize_output_pin
+    bl enable_tim2_clock
 
     @ Set prescaler to the TIM2_PRESCALER value.
-    ldr R0, =TIM2_BASE + TIM2_PSC_OFFSET
+    ldr R0, =TIM2_BASE + TIM2_3_PSC_OFFSET
     ldr R1, =TIM2_PRESCALER
     str R1, [R0]
 
     @ Set auto reload register to the TIM2_ARR value.
-    ldr R0, =TIM2_BASE + TIM2_ARR_OFFSET
+    ldr R0, =TIM2_BASE + TIM2_3_ARR_OFFSET
     ldr R1, =TIM2_ARR
     str R1, [R0]
 
     @ Set capture/compare register 1 to the TIM2_CCR1 value.
-    ldr R0, =TIM2_BASE + TIM2_CCR2_OFFSET
+    ldr R0, =TIM2_BASE + TIM2_3_CCR2_OFFSET
     ldr R1, =TIM2_CCR2
     str R1, [R0]
 
     @ Set capture/compare mode register 1 to the TIM2_CCMR1 value.
-    ldr R0, =TIM2_BASE + TIM2_CCMR1_OFFSET
+    ldr R0, =TIM2_BASE + TIM2_3_CCMR1_OFFSET
     ldr R1, =TIM2_CCMR1
     str R1, [R0]
 
     @ Set capture/compare enable register to the TIM2_CCER value.
-    ldr R0, =TIM2_BASE + TIM2_CCER_OFFSET
+    ldr R0, =TIM2_BASE + TIM2_3_CCER_OFFSET
     ldr R1, =TIM2_CCER
     str R1, [R0]
 
-    @ Set control register 1 to the TIM2_CR1 value.
-    ldr R0, =TIM2_BASE + TIM2_CR1_OFFSET
-    ldr R1, =TIM2_CR1
+    @ Set event generation register to the TIM2_EGR value.
+    ldr R0, =TIM2_BASE + TIM2_3_EGR_OFFSET
+    ldr R1, =TIM2_EGR
     str R1, [R0]
 
-    @ Set event generation register to the TIM2_EGR value.
-    ldr R0, =TIM2_BASE + TIM2_EGR_OFFSET
-    ldr R1, =TIM2_EGR
+    @ Set control register 1 to the TIM2_CR1 value.
+    ldr R0, =TIM2_BASE + TIM2_3_CR1_OFFSET
+    ldr R1, =TIM2_CR1
     str R1, [R0]
 
     pop {PC}

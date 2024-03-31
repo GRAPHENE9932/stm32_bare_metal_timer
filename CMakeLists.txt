@@ -31,7 +31,7 @@ add_link_options(
     -T ${LINKER_SCRIPT}
 )
 
-add_executable(stm32_bare_metal_timer src/main.s src/startup.s src/io_operations.s src/seven_seg_disp.s src/clocks.s)
+add_executable(stm32_bare_metal_timer src/main.s src/startup.s src/io_operations.s src/seven_seg_disp.s src/tim2.s src/tim3.s)
 set_target_properties(stm32_bare_metal_timer PROPERTIES OUTPUT_NAME stm32_bare_metal_timer.elf)
 
 add_custom_target(

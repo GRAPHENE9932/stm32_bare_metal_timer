@@ -1,11 +1,12 @@
-.section .bss
+.section .data
 @ Binary-coded decimals in form
 @ 0000000000000000<D3><D2><D1><D0>
 digits:
-    .word 0x00000000
+    .word 0x00009012
 
 .section .text
 .global main
+.global tim3_tick
 
 @ Accepts no arguments. Returns nothing.
 @ Just wastes 4000000 cycles.
@@ -21,12 +22,17 @@ delay_for_4m_cycles_loop:
     nop                             @ 1 cycle.
     bx LR                           @ 3 cycles.
 
-.type main, %function
-main:
+.type tim3_tick, %function
+tim3_tick:
     ldr R0, =digits
-    ldr R1, =0x00001234
+    ldr R1, [R0]
+    add R1, R1, #1
     str R1, [R0]
 
+    bx LR
+
+.type main, %function
+main:
     bl enable_io_porta_clock
     bl enable_io_portb_clock
     
@@ -39,7 +45,8 @@ main:
     ldr R0, =digits         @ Digits location.
     bl seven_seg_set_digits_address
      
-    bl tim2_pwm_initialize
+    bl tim2_initialize
+    bl tim3_initialize
 
 loop:
     bl seven_seg_display

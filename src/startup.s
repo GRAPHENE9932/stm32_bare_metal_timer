@@ -43,7 +43,7 @@ isr_vector:
     .word default_handler
     .word default_handler
     .word default_handler
-    .word default_handler
+    .word tim3_interrupt_handler    @ TIM3 global interrupt.
     .word default_handler
     .word default_handler
     .word default_handler
@@ -64,6 +64,15 @@ isr_vector:
 .type default_handler, %function
 default_handler:
     b reset_handler
+
+.type tim3_interrupt_handler, %function
+tim3_interrupt_handler:
+    push {LR}
+
+    bl tim3_tick
+    bl tim3_reset_int_flag
+
+    pop {PC}
 
 .type copy_data, %function
 copy_data:
