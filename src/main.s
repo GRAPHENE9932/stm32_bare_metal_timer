@@ -30,17 +30,16 @@ decrement_second_skip_subtracting_6_from_secs:
     str R1, [R0]
     bx LR
 decrement_second_minute_over:
-    mov R3, R1
-    lsr R3, R3, #8              @ R3 stores the minute digits only now.
-    sub R3, R3, #1
+    lsr R1, R1, #8              @ R1 stores the minute digits only now.
+    sub R1, R1, #1
 
+    mov R3, R1
     ldr R2, =0x0000000F         @ R2 stores the AND mask to extract the first digit only.
     and R3, R3, R2
     cmp R3, #0x09
     ble decrement_second_skip_subtracting_6_from_mins
     sub R1, #6
 decrement_second_skip_subtracting_6_from_mins:
-    mov R1, R3
     lsl R1, R1, #8
     ldr R2, =0x00000059         @ R2 stores the D1:D0 digits to set.
     orr R1, R1, R2
