@@ -18,6 +18,12 @@ seven_seg_display_leds:
 .byte 0b11100000    @ 7
 .byte 0b11111110    @ 8
 .byte 0b11110110    @ 9
+.byte 0b11101110    @ A
+.byte 0b00111110    @ B
+.byte 0b10011100    @ C
+.byte 0b01111010    @ D
+.byte 0b10011110    @ E
+.byte 0b10001110    @ F
 
 .section .bss
 digits_address:
