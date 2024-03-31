@@ -1,5 +1,7 @@
 .section .text
 .global tim2_initialize
+.global tim2_enable
+.global tim2_disable
 
 .equ GPIOB_BASE, 0x48000400
 .equ GPIOX_AFRL_OFFSET, 0x00000020
@@ -19,7 +21,7 @@
 .equ TIM2_CCR2, 5                           @ Capture/compare register. Half of the TIM_ARR, so the PWM duty cycle is 50%.
 .equ TIM2_CCMR1, 0b0110100000000000         @ OC2PE set to 1, OC2M set to 110.
 .equ TIM2_CCER, 0b0000000000010000          @ CC2E set to 1, CC2P set to 0 (reset value).
-.equ TIM2_CR1, 0b0000000000000001           @ CEN set to 1, CMS set to 00 (reset value), DIR to 0 (reset value).
+.equ TIM2_CR1, 0b0000000000000000           @ CEN set to 0, CMS set to 00 (reset value), DIR to 0 (reset value).
 .equ TIM2_EGR, 0b0000000000000001           @ UG set to 1.
 
 .equ RCC_BASE, 0x40021000
@@ -48,6 +50,28 @@ enable_tim2_clock:
 
     ldr R2, =0x00000001                     @ R2 stores the OR mask (TIM2EN=1).
     orr R1, R1, R2
+    str R1, [R0]
+
+    bx LR
+
+.type tim2_enable, %function
+tim2_enable:
+    ldr R0, =TIM2_BASE + TIM2_3_CR1_OFFSET  @ R0 stores the TIM2_CR1 register location.
+    ldr R1, [R0]                            @ R1 stores the TIM2_CR1 register value.
+
+    ldr R2, =0x00000001                     @ R2 stores the OR mask (CEN=1)
+    orr R1, R1, R2
+    str R1, [R0]
+
+    bx LR
+
+.type tim2_disable, %function
+tim2_disable:
+    ldr R0, =TIM2_BASE + TIM2_3_CR1_OFFSET  @ R0 stores the TIM2_CR1 register location.
+    ldr R1, [R0]                            @ R1 stores the TIM2_CR1 register value.
+
+    ldr R2, =0xFFFFFFFE                     @ R2 stores the AND mask (CEN=0)
+    and R1, R1, R2
     str R1, [R0]
 
     bx LR

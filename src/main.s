@@ -48,6 +48,8 @@ main:
     bl tim2_initialize
     bl tim3_initialize
 
+    bl tim2_enable
+
 loop:
     bl seven_seg_display
     
