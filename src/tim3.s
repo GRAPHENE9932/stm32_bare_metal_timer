@@ -13,8 +13,8 @@
 .equ TIM2_3_DIER_OFFSET, 0x0000000C
 .equ TIM2_3_SR_OFFSET, 0x00000010
 
-.equ TIM3_PRESCALER, 10000                  @ 800 Hz at clock frequency of 8 MHz.
-.equ TIM3_ARR, 800                          @ Period of exactly 1 s (1 Hz).
+.equ TIM3_PRESCALER, 1000                   @ 8000 Hz at clock frequency of 8 MHz.
+.equ TIM3_ARR, 800                          @ Period of exactly 0.1 s (10 Hz).
 .equ TIM3_EGR, 0b0000000000000001           @ UG set to 1.
 .equ TIM3_DIER, 0b0000000000000001          @ UIE set to 1.
 .equ TIM3_CR1, 0b0000000000000001           @ CEN set to 1, CMS set to 00 (reset value), DIR to 0 (reset value).

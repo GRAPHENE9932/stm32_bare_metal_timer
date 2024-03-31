@@ -2,7 +2,11 @@
 @ Binary-coded decimals in form
 @ 0000000000000000<D3><D2><D1><D0>
 digits:
-    .word 0x00009012
+    .word 0x00004500
+
+.section .bss
+tim3_tick_phase:
+    .word 0x00
 
 .section .text
 .global main
@@ -50,6 +54,20 @@ decrement_second_skip_subtracting_6_from_mins:
 tim3_tick:
     push {LR}
 
+    bl tim2_disable
+
+    ldr R0, =tim3_tick_phase
+    ldr R1, [R0]
+    add R1, R1, #1
+
+    cmp R1, #10
+    beq tim3_tick_reset_phase
+    str R1, [R0]
+    pop {PC}
+tim3_tick_reset_phase:
+    ldr R1, =0
+    str R1, [R0]
+    bl tim2_enable
     bl decrement_second
 
     pop {PC}
@@ -70,8 +88,6 @@ main:
      
     bl tim2_initialize
     bl tim3_initialize
-
-    bl tim2_enable
 
 loop:
     bl seven_seg_display
