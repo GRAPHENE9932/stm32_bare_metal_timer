@@ -65,6 +65,11 @@ seven_seg_display_loop:
     push {R0, R1, R4, R5}
     
     ldrb R0, [R0, R3]               @ The bits to shift out.
+    cmp R4, #2
+    bne seven_seg_display_loop_skip_dot
+    ldr R6, =1
+    orr R0, R0, R6
+seven_seg_display_loop_skip_dot:
     ldr R1, =0x0000F000
     orr R0, R0, R1
     mvn R1, R5
