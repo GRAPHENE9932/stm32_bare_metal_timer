@@ -1,6 +1,8 @@
 .section .text
 .global tim3_initialize
 .global tim3_reset_int_flag
+.global tim3_enable
+.global tim3_disable
 
 .equ TIM3_BASE, 0x40000400
 .equ TIM2_3_PSC_OFFSET, 0x00000028
@@ -46,6 +48,26 @@ tim3_reset_int_flag:
     ldr R1, [R0]                            @ R1 stores the TIM3_SR register value.
     ldr R2, =0xFFFFFFFE                     @ Setting UIF=0.
     and R1, R1, R2
+    str R1, [R0]
+
+    bx LR
+
+.type tim3_disable, %function
+tim3_disable:
+    ldr R0, =TIM3_BASE + TIM2_3_CR1_OFFSET  @ R0 stores the TIM3_CR1 register location.
+    ldr R1, [R0]                            @ R1 stores the TIM3_CR1 register value.
+    ldr R2, =0xFFFFFFFE                     @ R2 stores the AND mask (CEN=0).
+    and R1, R1, R2
+    str R1, [R0]
+
+    bx LR
+
+.type tim3_enable, %function
+tim3_enable:
+    ldr R0, =TIM3_BASE + TIM2_3_CR1_OFFSET  @ R0 stores the TIM3_CR1 register location.
+    ldr R1, [R0]                            @ R1 stores the TIM3_CR1 register value.
+    ldr R2, =0x00000001                     @ R2 stores the OR mask (CEN=1).
+    orr R1, R1, R2
     str R1, [R0]
 
     bx LR
