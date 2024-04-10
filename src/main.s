@@ -1,4 +1,5 @@
 .section .data
+.global digits
 @ Binary-coded decimals in form
 @ 0000000000000000<D3><D2><D1><D0>
 digits:
@@ -6,11 +7,14 @@ digits:
 
 .section .bss
 tim3_tick_phase:
-    .word 0x00
+    .word 0x00000000
+pause_status:   @ 0 - unpaused, 1 - paused.
+    .word 0x00000000
 
 .section .text
 .global main
 .global tim3_tick
+.global toggle_pause
 
 .type decrement_second, %function
 decrement_second:
@@ -72,6 +76,29 @@ tim3_tick_reset_phase:
 
     pop {PC}
 
+.type toggle_pause, %function
+toggle_pause:
+    push {LR}
+
+    ldr R0, =pause_status       @ R0 stores the pause_status address.
+    ldr R1, [R0]                @ R1 stores the pause_status itself.
+    cmp R1, #0
+    bne toggle_pause_unpause
+
+    ldr R1, =0x00000001
+    str R1, [R0]
+    bl tim3_disable
+    bl tim2_disable
+
+    pop {PC}
+
+toggle_pause_unpause:
+    ldr R1, =0x00000000
+    str R1, [R0]
+    bl tim3_enable
+
+    pop {PC}
+
 .type main, %function
 main:
     bl enable_io_porta_clock
@@ -85,6 +112,8 @@ main:
 
     ldr R0, =digits         @ Digits location.
     bl seven_seg_set_digits_address
+
+    bl pause_resume_button_init
      
     bl tim2_initialize
     bl tim3_initialize

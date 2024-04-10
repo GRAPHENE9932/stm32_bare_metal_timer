@@ -32,7 +32,7 @@ isr_vector:
     .word default_handler
     .word default_handler
     .word default_handler
-    .word default_handler
+    .word exti0_1_interrupt_handler @ EXTI Line[1:0] interrupts.
     .word default_handler
     .word default_handler
     .word default_handler
