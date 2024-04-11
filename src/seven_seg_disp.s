@@ -77,7 +77,7 @@ seven_seg_display_loop_skip_dot:
     ldr R1, =16                     @ Amount of bits to shift out.
     bl shift_out_bits
 
-    pop {R5, R4, R1, R0}
+    pop {R0, R1, R4, R5}
 
     lsr R1, R1, #4
     lsl R5, R5, #1
