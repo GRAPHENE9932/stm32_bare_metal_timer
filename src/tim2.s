@@ -2,6 +2,8 @@
 .global tim2_initialize
 .global tim2_enable
 .global tim2_disable
+.global tim2_set_high_freq
+.global tim2_set_low_freq
 
 .equ GPIOB_BASE, 0x48000400
 .equ GPIOX_AFRL_OFFSET, 0x00000020
@@ -16,8 +18,9 @@
 .equ TIM2_3_EGR_OFFSET, 0x00000014
 .equ TIM2_3_DIER_OFFSET, 0x0000000C
 
-.equ TIM2_PRESCALER, 1000                   @ 8000 Hz at clock frequency of 8 MHz.
-.equ TIM2_ARR, 10                           @ Period of 1250 us (800 Hz).
+.equ TIM2_PRESCALER_HIGH_FREQ, 1000         @ 8000 Hz at clock frequency of 8 MHz.
+.equ TIM2_PRESCALER_LOW_FREQ, 2000          @ 4000 Hz at clock frequency of 8 MHz.
+.equ TIM2_ARR, 10                           @ Period of 1250 us or 2500 us (800 Hz or 400 Hz).
 .equ TIM2_CCR2, 5                           @ Capture/compare register. Half of the TIM_ARR, so the PWM duty cycle is 50%.
 .equ TIM2_CCMR1, 0b0110100000000000         @ OC2PE set to 1, OC2M set to 110.
 .equ TIM2_CCER, 0b0000000000010000          @ CC2E set to 1, CC2P set to 0 (reset value).
@@ -77,6 +80,22 @@ tim2_disable:
     bx LR
 
 @ Takes no arguments. Returns nothing.
+.type tim2_set_high_freq, %function
+tim2_set_high_freq:
+    ldr R0, =TIM2_BASE + TIM2_3_PSC_OFFSET  @ R0 stores the TIM2_PRESCALER register location.
+    ldr R1, =TIM2_PRESCALER_HIGH_FREQ       @ R1 stores the TIM2_PRESCALER register value.
+    str R1, [R0]
+    bx LR
+
+@ Takes no arguments. Returns nothing.
+.type tim2_set_low_freq, %function
+tim2_set_low_freq:
+    ldr R0, =TIM2_BASE + TIM2_3_PSC_OFFSET  @ R0 stores the TIM2_PRESCALER register location.
+    ldr R1, =TIM2_PRESCALER_LOW_FREQ        @ R1 stores the TIM2_PRESCALER register value.
+    str R1, [R0]
+    bx LR
+
+@ Takes no arguments. Returns nothing.
 .type tim2_initialize, %function
 tim2_initialize:
     push {LR}
@@ -86,7 +105,7 @@ tim2_initialize:
 
     @ Set prescaler to the TIM2_PRESCALER value.
     ldr R0, =TIM2_BASE + TIM2_3_PSC_OFFSET
-    ldr R1, =TIM2_PRESCALER
+    ldr R1, =TIM2_PRESCALER_HIGH_FREQ
     str R1, [R0]
 
     @ Set auto reload register to the TIM2_ARR value.

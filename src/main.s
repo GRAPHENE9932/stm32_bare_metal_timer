@@ -61,20 +61,42 @@ tim3_tick:
 
     bl tim2_disable
 
-    ldr R0, =tim3_tick_phase
-    ldr R1, [R0]
+    ldr R0, =tim3_tick_phase    @ R0 stores the tim3_tick_phase address.
+    ldr R1, [R0]                @ R1 stores the tim3_tick_phase value itself.
     add R1, R1, #1
+    str R1, [R0]
 
+    ldr R2, =digits             @ R2 stores the digits address.
+    ldr R3, [R2]                @ R3 stores the digits itself.
+    cmp R3, #0
+    bne tim3_tick_keep_ticking
+
+    cmp R1, #5
+    bhi tim3_tick_high_freq_beep
+    push {R0-R3}
+    bl tim2_set_low_freq
+    bl tim2_enable
+    pop {R0-R3}
+    b tim3_tick_keep_ticking
+tim3_tick_high_freq_beep:
+    push {R0-R3}
+    bl tim2_set_high_freq
+    bl tim2_enable
+    pop {R0-R3}
+tim3_tick_keep_ticking:
     cmp R1, #10
     beq tim3_tick_reset_phase
-    str R1, [R0]
     pop {PC}
 tim3_tick_reset_phase:
     ldr R1, =0
     str R1, [R0]
+    cmp R3, #0
+    bne tim3_tick_decrement_second
+    pop {PC}
+tim3_tick_decrement_second:
+    bl tim2_set_high_freq
     bl tim2_enable
     bl decrement_second
-
     pop {PC}
 
 .type toggle_pause, %function
