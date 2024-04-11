@@ -64,7 +64,7 @@ exti0_1_interrupt_handler:
     
     bl toggle_pause
 
-    @ Set EXTI_PR register's PIF0 value to 0.
+    @ Set EXTI_PR register's PIF0 value to 1.
     ldr R0, =EXTI_BASE_ADDRESS + EXTI_PR_OFFSET @ R0 stores the EXTI_PR register address.
     ldr R1, [R0]            @ R1 stores the EXTI_PR register value itself.
     ldr R2, =0x00000001     @ R2 stores the OR mask.
