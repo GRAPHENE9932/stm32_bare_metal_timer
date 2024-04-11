@@ -39,6 +39,7 @@ add_executable(
     src/tim2.s
     src/tim3.s
     src/pause_resume_button.s
+    src/plus_30_secs_button.s
 )
 set_target_properties(stm32_bare_metal_timer PROPERTIES OUTPUT_NAME stm32_bare_metal_timer.elf)
 
