@@ -1,12 +1,10 @@
-.section .data
+.section .bss
 .global digits
+tim3_tick_phase:
+    .word 0x00000000
 @ Binary-coded decimals in form
 @ 0000000000000000<D3><D2><D1><D0>
 digits:
-    .word 0x00004500
-
-.section .bss
-tim3_tick_phase:
     .word 0x00000000
 pause_status:   @ 0 - unpaused, 1 - paused.
     .word 0x00000000
@@ -174,9 +172,9 @@ main:
 
     bl pause_resume_button_init
     bl plus_30_secs_button_init
-     
     bl tim2_initialize
     bl tim3_initialize
+    bl toggle_pause
 
 loop:
     bl seven_seg_display
